@@ -14,6 +14,7 @@ export type Point = { x: number; y: number };
 export interface DrawCanvasHandle {
   getStrokes(): Point[][];
   exportImage(pixelRatio?: number): string;
+  clearCanvas(): void;
 }
 
 interface DrawCanvasProps {
@@ -53,6 +54,9 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
       getStrokes: () => strokes,
       exportImage: (pixelRatio = 2) =>
         stageRef.current?.toDataURL({ pixelRatio }) || "",
+      clearCanvas: () => {
+        setStrokes([]);
+      },
     }));
 
     const handleMouseDown = (e: any) => {
