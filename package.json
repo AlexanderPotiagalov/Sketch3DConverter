@@ -12,6 +12,7 @@
     "@types/three": "^0.176.0",
     "imagetracerjs": "^1.2.6",
     "konva": "^9.3.20",
+    "lucide-react": "^0.511.0",
     "next": "15.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
