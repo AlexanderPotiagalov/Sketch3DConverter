@@ -137,7 +137,7 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
     };
 
     return (
-      <div ref={containerRef} className="w-full h-full">
+      <div ref={containerRef} className="w-full h-full relative">
         {stageSize.width > 0 && (
           <Stage
             width={stageSize.width}
@@ -165,6 +165,9 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
                   tension={0.5}
                   lineCap="round"
                   lineJoin="round"
+                  globalCompositeOperation={
+                    tool === "eraser" ? "destination-out" : "source-over"
+                  }
                 />
               ))}
               {currentStroke && (
@@ -180,6 +183,15 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
             </Layer>
           </Stage>
         )}
+
+        {/* Drawing indicator */}
+        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full shadow text-sm flex items-center">
+          <span
+            className="w-2 h-2 rounded-full mr-2"
+            style={{ backgroundColor: color }}
+          ></span>
+          <span>{tool === "pen" ? "Drawing" : "Erasing"}</span>
+        </div>
       </div>
     );
   }
