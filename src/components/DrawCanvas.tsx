@@ -28,6 +28,7 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
     const [strokes, setStrokes] = useState<Point[][]>([]);
     const [currentStroke, setCurrentStroke] = useState<Point[] | null>(null);
     const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
+    const [isDrawing, setIsDrawing] = useState(false);
 
     // Update stage size on mount and resize
     useEffect(() => {
@@ -50,25 +51,38 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
 
     useImperativeHandle(ref, () => ({
       getStrokes: () => strokes,
-      exportImage: (pixelRatio = 1) =>
+      exportImage: (pixelRatio = 2) =>
         stageRef.current?.toDataURL({ pixelRatio }) || "",
     }));
 
-    const handleMouseDown = () => {
+    const handleMouseDown = (e: any) => {
+      e.evt.preventDefault();
+      setIsDrawing(true);
       const pos = stageRef.current.getPointerPosition();
       if (pos) setCurrentStroke([{ x: pos.x, y: pos.y }]);
     };
 
-    const handleMouseMove = () => {
-      if (!currentStroke) return;
+    const handleMouseMove = (e: any) => {
+      e.evt.preventDefault();
+      if (!isDrawing) return;
       const pos = stageRef.current.getPointerPosition();
-      if (pos) setCurrentStroke([...currentStroke, { x: pos.x, y: pos.y }]);
+      if (pos)
+        setCurrentStroke([...(currentStroke || []), { x: pos.x, y: pos.y }]);
     };
 
     const handleMouseUp = () => {
-      if (currentStroke) {
+      setIsDrawing(false);
+      if (currentStroke && currentStroke.length > 1) {
         setStrokes([...strokes, currentStroke]);
         setCurrentStroke(null);
+      }
+    };
+
+    const handleMouseLeave = () => {
+      if (isDrawing && currentStroke && currentStroke.length > 1) {
+        setStrokes([...strokes, currentStroke]);
+        setCurrentStroke(null);
+        setIsDrawing(false);
       }
     };
 
@@ -78,10 +92,11 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
           <Stage
             width={stageSize.width}
             height={stageSize.height}
-            style={{ background: "#fff" }}
+            style={{ background: "#fff", cursor: "crosshair" }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
             ref={stageRef}
           >
             <Layer>
@@ -115,4 +130,4 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
 );
 
 DrawCanvas.displayName = "DrawCanvas";
-export default DrawCan;
+export default DrawCanvas;
