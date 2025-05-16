@@ -90,6 +90,20 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
       }
     };
 
+    const handleTouchStart = (e: any) => {
+      const touch = e.evt.touches[0];
+      handleMouseDown({ evt: touch });
+    };
+
+    const handleTouchMove = (e: any) => {
+      const touch = e.evt.touches[0];
+      handleMouseMove({ evt: touch });
+    };
+
+    const handleTouchEnd = () => {
+      handleMouseUp();
+    };
+
     return (
       <div ref={containerRef} className="w-full h-full">
         {stageSize.width > 0 && (
@@ -101,6 +115,9 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseLeave}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
             ref={stageRef}
           >
             <Layer>
