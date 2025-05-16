@@ -5,7 +5,7 @@ import React, {
   useImperativeHandle,
   useRef,
   useState,
-  Ref,
+  useEffect,
 } from "react";
 import { Stage, Layer, Line } from "react-konva";
 
@@ -16,15 +16,37 @@ export interface DrawCanvasHandle {
   exportImage(pixelRatio?: number): string;
 }
 
-// 1) Define an (empty) props interface
-interface DrawCanvasProps {}
+interface DrawCanvasProps {
+  color: string;
+  strokeWidth: number;
+}
 
-// 2) Add that as the second generic to forwardRef:
 const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
-  (props, ref) => {
+  ({ color, strokeWidth }, ref) => {
     const stageRef = useRef<any>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const [strokes, setStrokes] = useState<Point[][]>([]);
-    const [current, setCurrent] = useState<Point[] | null>(null);
+    const [currentStroke, setCurrentStroke] = useState<Point[] | null>(null);
+    const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
+
+    // Update stage size on mount and resize
+    useEffect(() => {
+      const updateSize = () => {
+        if (containerRef.current) {
+          setStageSize({
+            width: containerRef.current.clientWidth,
+            height: containerRef.current.clientHeight,
+          });
+        }
+      };
+
+      updateSize();
+      window.addEventListener("resize", updateSize);
+
+      return () => {
+        window.removeEventListener("resize", updateSize);
+      };
+    }, []);
 
     useImperativeHandle(ref, () => ({
       getStrokes: () => strokes,
@@ -34,59 +56,63 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
 
     const handleMouseDown = () => {
       const pos = stageRef.current.getPointerPosition();
-      if (pos) setCurrent([{ x: pos.x, y: pos.y }]);
+      if (pos) setCurrentStroke([{ x: pos.x, y: pos.y }]);
     };
+
     const handleMouseMove = () => {
-      if (!current) return;
+      if (!currentStroke) return;
       const pos = stageRef.current.getPointerPosition();
-      if (pos) setCurrent([...current, { x: pos.x, y: pos.y }]);
+      if (pos) setCurrentStroke([...currentStroke, { x: pos.x, y: pos.y }]);
     };
+
     const handleMouseUp = () => {
-      if (current) {
-        setStrokes([...strokes, current]);
-        setCurrent(null);
+      if (currentStroke) {
+        setStrokes([...strokes, currentStroke]);
+        setCurrentStroke(null);
       }
     };
 
     return (
-      <Stage
-        width={window.innerWidth * 0.5}
-        height={window.innerHeight}
-        style={{ background: "#fff" }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        ref={stageRef}
-      >
-        <Layer>
-          {strokes.map((stroke, i) => (
-            <Line
-              key={i}
-              points={stroke.flatMap((p) => [p.x, p.y])}
-              stroke="black"
-              strokeWidth={2}
-              tension={0.5}
-              lineCap="round"
-              lineJoin="round"
-            />
-          ))}
-          {current && (
-            <Line
-              points={current.flatMap((p) => [p.x, p.y])}
-              stroke="black"
-              strokeWidth={2}
-              tension={0.5}
-              lineCap="round"
-              lineJoin="round"
-            />
-          )}
-        </Layer>
-      </Stage>
+      <div ref={containerRef} className="w-full h-full">
+        {stageSize.width > 0 && (
+          <Stage
+            width={stageSize.width}
+            height={stageSize.height}
+            style={{ background: "#fff" }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            ref={stageRef}
+          >
+            <Layer>
+              {strokes.map((stroke, i) => (
+                <Line
+                  key={i}
+                  points={stroke.flatMap((p) => [p.x, p.y])}
+                  stroke={color}
+                  strokeWidth={strokeWidth}
+                  tension={0.5}
+                  lineCap="round"
+                  lineJoin="round"
+                />
+              ))}
+              {currentStroke && (
+                <Line
+                  points={currentStroke.flatMap((p) => [p.x, p.y])}
+                  stroke={color}
+                  strokeWidth={strokeWidth}
+                  tension={0.5}
+                  lineCap="round"
+                  lineJoin="round"
+                />
+              )}
+            </Layer>
+          </Stage>
+        )}
+      </div>
     );
   }
 );
 
-// 3) Add a displayName for nicer React DevTools
 DrawCanvas.displayName = "DrawCanvas";
-
-export default DrawCanvas;
+export default DrawCan;
