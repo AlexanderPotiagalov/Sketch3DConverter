@@ -20,10 +20,11 @@ export interface DrawCanvasHandle {
 interface DrawCanvasProps {
   color: string;
   strokeWidth: number;
+  tool?: string;
 }
 
 const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
-  ({ color, strokeWidth }, ref) => {
+  ({ color, strokeWidth, tool = "pen" }, ref) => {
     const stageRef = useRef<any>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const [strokes, setStrokes] = useState<Point[][]>([]);
@@ -63,15 +64,46 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
       e.evt.preventDefault();
       setIsDrawing(true);
       const pos = stageRef.current.getPointerPosition();
-      if (pos) setCurrentStroke([{ x: pos.x, y: pos.y }]);
+
+      if (pos) {
+        if (tool === "eraser") {
+          const threshold = strokeWidth * 2;
+          setStrokes(
+            strokes.filter((stroke) => {
+              return !stroke.some((point) => {
+                const dx = point.x - pos.x;
+                const dy = point.y - pos.y;
+                return Math.sqrt(dx * dx + dy * dy) < threshold;
+              });
+            })
+          );
+        } else {
+          setCurrentStroke([{ x: pos.x, y: pos.y }]);
+        }
+      }
     };
 
     const handleMouseMove = (e: any) => {
       e.evt.preventDefault();
       if (!isDrawing) return;
       const pos = stageRef.current.getPointerPosition();
-      if (pos)
-        setCurrentStroke([...(currentStroke || []), { x: pos.x, y: pos.y }]);
+
+      if (pos) {
+        if (tool === "eraser") {
+          const threshold = strokeWidth * 2;
+          setStrokes(
+            strokes.filter((stroke) => {
+              return !stroke.some((point) => {
+                const dx = point.x - pos.x;
+                const dy = point.y - pos.y;
+                return Math.sqrt(dx * dx + dy * dy) < threshold;
+              });
+            })
+          );
+        } else if (currentStroke) {
+          setCurrentStroke([...currentStroke, { x: pos.x, y: pos.y }]);
+        }
+      }
     };
 
     const handleMouseUp = () => {
@@ -110,7 +142,10 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
           <Stage
             width={stageSize.width}
             height={stageSize.height}
-            style={{ background: "#fff", cursor: "crosshair" }}
+            style={{
+              background: "#fff",
+              cursor: tool === "eraser" ? "not-allowed" : "crosshair",
+            }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
