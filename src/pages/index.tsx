@@ -12,6 +12,8 @@ const ThreeView = dynamic(() => import("@/components/ThreeView"), {
 export default function Home() {
   const drawRef = useRef<DrawCanvasHandle>(null);
   const [show3D, setShow3D] = useState(false);
+  const [color, setColor] = useState("#0077ff");
+  const [strokeWidth, setStrokeWidth] = useState(5);
 
   const handleConvert = () => {
     setShow3D(true);
@@ -20,7 +22,7 @@ export default function Home() {
   return (
     <div className="flex h-screen">
       <div className="w-1/2 border-r">
-        <DrawCanvas ref={drawRef} />
+        <DrawCanvas ref={drawRef} color={color} strokeWidth={strokeWidth} />
         <button
           className="m-4 px-4 py-2 bg-blue-600 text-white rounded"
           onClick={handleConvert}
