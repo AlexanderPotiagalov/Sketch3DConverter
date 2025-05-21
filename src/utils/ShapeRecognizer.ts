@@ -254,3 +254,10 @@ function detectShape(strokes: Stroke[]): RecognizedShape | null {
     boundingBox: bbox,
   };
 }
+
+export function recognizeShapes(strokes: Stroke[]): RecognizedShape[] {
+  if (!strokes.length) return [];
+  return mergeRelatedStrokes(strokes)
+    .map((group) => detectShape(group))
+    .filter((s): s is RecognizedShape => s !== null);
+}
