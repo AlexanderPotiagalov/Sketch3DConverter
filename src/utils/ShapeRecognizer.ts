@@ -178,3 +178,79 @@ function mergeRelatedStrokes(
 function getAllPoints(strokes: Stroke[]): Point[] {
   return strokes.flatMap((s) => s.points);
 }
+
+function detectShape(strokes: Stroke[]): RecognizedShape | null {
+  if (strokes.length === 0) return null;
+  const pts = getAllPoints(strokes);
+  const bbox = getBoundingBox(pts);
+  const center = getCentroid(pts);
+  const circ = calculateCircularity(pts);
+  const rect = calculateRectangularity(pts);
+  const color = strokes[0].color;
+
+  // Circle
+  if (circ > 0.7) {
+    const radius =
+      pts.reduce((s, p) => s + distance(center, p), 0) / pts.length;
+    return {
+      type: "circle",
+      points: [center, { x: center.x + radius, y: center.y }],
+      color,
+      originalStrokes: strokes,
+      boundingBox: bbox,
+      properties: { radius, center, area: Math.PI * radius * radius },
+    };
+  }
+  // Rectangle
+  if (rect > 0.8) {
+    return {
+      type: "rectangle",
+      points: [
+        { x: bbox.x, y: bbox.y },
+        { x: bbox.x + bbox.width, y: bbox.y },
+        { x: bbox.x + bbox.width, y: bbox.y + bbox.height },
+        { x: bbox.x, y: bbox.y + bbox.height },
+      ],
+      color,
+      originalStrokes: strokes,
+      boundingBox: bbox,
+      properties: {
+        width: bbox.width,
+        height: bbox.height,
+        area: bbox.width * bbox.height,
+      },
+    };
+  }
+  // Line
+  if (strokes.length === 1 && strokes[0].points.length < 10) {
+    const simple = simplifyPath(strokes[0].points, 5);
+    if (simple.length <= 3) {
+      return {
+        type: "line",
+        points: simple,
+        color,
+        originalStrokes: strokes,
+        properties: { length: pathLength(simple) },
+      };
+    }
+  }
+  // Triangle
+  const simple = simplifyPath(pts, 5);
+  if (simple.length <= 4) {
+    return {
+      type: "triangle",
+      points: simple,
+      color,
+      originalStrokes: strokes,
+      boundingBox: bbox,
+    };
+  }
+  // Default → polygon
+  return {
+    type: "polygon",
+    points: simple,
+    color,
+    originalStrokes: strokes,
+    boundingBox: bbox,
+  };
+}
