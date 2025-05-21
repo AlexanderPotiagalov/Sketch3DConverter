@@ -138,3 +138,43 @@ function simplifyPath(points: Point[], tolerance: number = 5): Point[] {
   simplified.push(points[points.length - 1]);
   return simplified;
 }
+
+// Group nearby/color-matched strokes into clusters
+function mergeRelatedStrokes(
+  strokes: Stroke[],
+  distanceThreshold: number = 20
+): Stroke[][] {
+  if (strokes.length <= 1) return [strokes];
+  const processed = new Set<number>();
+  const groups: Stroke[][] = [];
+
+  const areRelated = (a: Stroke, b: Stroke) =>
+    a.color === b.color &&
+    a.points.some((p1) =>
+      b.points.some((p2) => distance(p1, p2) < distanceThreshold)
+    );
+
+  for (let i = 0; i < strokes.length; i++) {
+    if (processed.has(i)) continue;
+    const group = [strokes[i]];
+    processed.add(i);
+    let added: boolean;
+    do {
+      added = false;
+      strokes.forEach((s, j) => {
+        if (!processed.has(j) && group.some((g) => areRelated(g, s))) {
+          group.push(s);
+          processed.add(j);
+          added = true;
+        }
+      });
+    } while (added);
+    groups.push(group);
+  }
+  return groups;
+}
+
+// Flatten a group of strokes into one big point array
+function getAllPoints(strokes: Stroke[]): Point[] {
+  return strokes.flatMap((s) => s.points);
+}
