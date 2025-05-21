@@ -94,3 +94,47 @@ function calculateRectangularity(points: Point[]): number {
   area = Math.abs(area) / 2;
   return Math.min(area / bboxArea, bboxArea / area);
 }
+
+function simplifyPath(points: Point[], tolerance: number = 5): Point[] {
+  if (points.length <= 2) return [...points];
+
+  const findFurthest = (start: Point, end: Point, pts: Point[]) => {
+    let maxDist = 0,
+      idx = 0;
+    const lineLen = distance(start, end);
+    if (lineLen === 0) return { index: 0, distance: 0 };
+    pts.forEach((p, i) => {
+      const dist =
+        Math.abs(
+          (end.y - start.y) * p.x -
+            (end.x - start.x) * p.y +
+            end.x * start.y -
+            end.y * start.x
+        ) / lineLen;
+      if (dist > maxDist) {
+        maxDist = dist;
+        idx = i;
+      }
+    });
+    return { index: idx, distance: maxDist };
+  };
+
+  const recurse = (pts: Point[], s: number, e: number): Point[] => {
+    if (e - s <= 1) return [pts[s]];
+    const { index, distance } = findFurthest(
+      pts[s],
+      pts[e],
+      pts.slice(s + 1, e)
+    );
+    if (distance > tolerance) {
+      const mid = index + s + 1;
+      return [...recurse(pts, s, mid), ...recurse(pts, mid, e)];
+    } else {
+      return [pts[s]];
+    }
+  };
+
+  const simplified = recurse(points, 0, points.length - 1);
+  simplified.push(points[points.length - 1]);
+  return simplified;
+}
