@@ -68,3 +68,29 @@ function getCentroid(points: Point[]): Point {
   });
   return { x: sumX / n, y: sumY / n };
 }
+
+// Calculate how circular a shape is (1.0 is perfect circle)
+function calculateCircularity(points: Point[]): number {
+  if (points.length < 5) return 0;
+  const center = getCentroid(points);
+  const distances = points.map((p) => distance(center, p));
+  const avg = distances.reduce((s, d) => s + d, 0) / distances.length;
+  const variance =
+    distances.reduce((s, d) => s + (d - avg) ** 2, 0) / distances.length;
+  const stdDev = Math.sqrt(variance);
+  return Math.max(0, 1 - stdDev / avg / 0.5);
+}
+
+// Calculate how rectangular a shape is
+function calculateRectangularity(points: Point[]): number {
+  if (points.length < 4) return 0;
+  const bbox = getBoundingBox(points);
+  const bboxArea = bbox.width * bbox.height;
+  let area = 0;
+  for (let i = 0; i < points.length; i++) {
+    const j = (i + 1) % points.length;
+    area += points[i].x * points[j].y - points[j].x * points[i].y;
+  }
+  area = Math.abs(area) / 2;
+  return Math.min(area / bboxArea, bboxArea / area);
+}
