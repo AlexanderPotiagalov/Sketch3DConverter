@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { RecognizedShape } from "@/utils/ShapeRecognizer";
+import { Stroke } from "@/components/DrawCanvas";
 
 type ExtrudeSpec = {
   type: "extrude";
@@ -72,6 +73,25 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  res.setHeader("Allow", "POST");
-  return res.status(405).end("Only POST allowed");
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
+    return res.status(405).end("Only POST allowed");
+  }
+  const {
+    strokes,
+    recognizedShapes,
+  }: { strokes?: Stroke[]; recognizedShapes?: RecognizedShape[] } = req.body;
+  if (!strokes && !recognizedShapes) {
+    return res
+      .status(400)
+      .json({ error: "Missing strokes or recognizedShapes" });
+  }
+  let shapes: ExtrudeSpec[];
+  if (recognizedShapes?.length) {
+    shapes = shapesToExtrusions(recognizedShapes);
+  } else {
+    const { recognizeShapes } = require("@/utils/ShapeRecognizer");
+    shapes = shapesToExtrusions(recognizeShapes(strokes!));
+  }
+  return res.status(200).json({ shapes });
 }
