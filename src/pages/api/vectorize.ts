@@ -77,21 +77,37 @@ export default async function handler(
     res.setHeader("Allow", "POST");
     return res.status(405).end("Only POST allowed");
   }
-  const {
-    strokes,
-    recognizedShapes,
-  }: { strokes?: Stroke[]; recognizedShapes?: RecognizedShape[] } = req.body;
-  if (!strokes && !recognizedShapes) {
-    return res
-      .status(400)
-      .json({ error: "Missing strokes or recognizedShapes" });
+
+  try {
+    const {
+      strokes,
+      recognizedShapes,
+    }: {
+      strokes?: Stroke[];
+      recognizedShapes?: RecognizedShape[];
+    } = req.body;
+
+    if (!strokes && !recognizedShapes) {
+      return res.status(400).json({
+        error: "Missing strokes or recognizedShapes in request body",
+      });
+    }
+
+    let shapes: ExtrudeSpec[] = [];
+
+    if (recognizedShapes && recognizedShapes.length > 0) {
+      shapes = shapesToExtrusions(recognizedShapes);
+    } else if (strokes && strokes.length > 0) {
+      const { recognizeShapes } = require("@/utils/ShapeRecognizer");
+      const detectedShapes = recognizeShapes(strokes);
+      shapes = shapesToExtrusions(detectedShapes);
+    } else {
+      return res.status(400).json({ error: "No valid input provided" });
+    }
+
+    return res.status(200).json({ shapes });
+  } catch (err: any) {
+    console.error("Error processing shapes:", err);
+    return res.status(500).json({ error: err.message || "Server error" });
   }
-  let shapes: ExtrudeSpec[];
-  if (recognizedShapes?.length) {
-    shapes = shapesToExtrusions(recognizedShapes);
-  } else {
-    const { recognizeShapes } = require("@/utils/ShapeRecognizer");
-    shapes = shapesToExtrusions(recognizeShapes(strokes!));
-  }
-  return res.status(200).json({ shapes });
 }
