@@ -7,7 +7,7 @@ import React, {
   useState,
   useEffect,
 } from "react";
-import { Stage, Layer, Line } from "react-konva";
+import { Stage, Layer, Line, Circle, Rect } from "react-konva";
 import { RecognizedShape } from "@/utils/ShapeRecognizer";
 
 export type Point = { x: number; y: number };
@@ -56,8 +56,22 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
       []
     );
 
-    // Resize handling unchanged…
+    // Resize handling
+    useEffect(() => {
+      const updateSize = () => {
+        if (containerRef.current) {
+          setStageSize({
+            width: containerRef.current.clientWidth,
+            height: containerRef.current.clientHeight,
+          });
+        }
+      };
+      updateSize();
+      window.addEventListener("resize", updateSize);
+      return () => window.removeEventListener("resize", updateSize);
+    }, []);
 
+    // Expose methods
     useImperativeHandle(
       ref,
       () => ({
@@ -75,7 +89,7 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
       [strokes, recognizedShapes, onStrokesChange, onShapesRecognized]
     );
 
-    // Recognize shapes on strokes change
+    // Recognize shapes
     useEffect(() => {
       import("@/utils/ShapeRecognizer").then(({ recognizeShapes }) => {
         if (strokes.length > 0) {
@@ -88,6 +102,9 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
         }
       });
     }, [strokes, onShapesRecognized]);
+
+    const getPointerPos = (): Point | null =>
+      (stageRef.current?.getPointerPosition() as Point) || null;
 
     const beginStroke = (pos: Point) => {
       setIsDrawing(true);
@@ -132,16 +149,16 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
       setCurrentStroke(null);
     };
 
+    // Event handlers
     const handleMouseDown = (e: any) => {
       e.evt.preventDefault();
-      const pos = stageRef.current.getPointerPosition();
-      if (pos) beginStroke({ x: pos.x, y: pos.y });
+      const pos = getPointerPos();
+      if (pos) beginStroke(pos);
     };
     const handleMouseMove = (e: any) => {
       e.evt.preventDefault();
-      if (!isDrawing) return;
-      const pos = stageRef.current.getPointerPosition();
-      if (pos) extendStroke({ x: pos.x, y: pos.y });
+      const pos = getPointerPos();
+      if (pos) extendStroke(pos);
     };
     const handleMouseUp = () => endStroke();
     const handleMouseLeave = () => endStroke();
@@ -152,14 +169,14 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
     const handleTouchEnd = () => endStroke();
 
     const renderRecognizedShapes = () =>
-      recognizedShapes.map((shape, i) => {
+      recognizedShapes.map((shape, index) => {
         switch (shape.type) {
           case "circle":
             if (!shape.properties?.center || !shape.properties?.radius)
               return null;
             return (
               <Circle
-                key={i}
+                key={index}
                 x={shape.properties.center.x}
                 y={shape.properties.center.y}
                 radius={shape.properties.radius}
@@ -173,7 +190,7 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
             if (!shape.boundingBox) return null;
             return (
               <Rect
-                key={i}
+                key={index}
                 x={shape.boundingBox.x}
                 y={shape.boundingBox.y}
                 width={shape.boundingBox.width}
@@ -189,7 +206,7 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
           case "line":
             return (
               <Line
-                key={i}
+                key={index}
                 points={shape.points.flatMap((p) => [p.x, p.y])}
                 stroke={shape.color}
                 strokeWidth={2}
@@ -223,12 +240,12 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
             onTouchEnd={handleTouchEnd}
           >
             <Layer>
-              {strokes.map((s, i) => (
+              {strokes.map((stroke, i) => (
                 <Line
                   key={i}
-                  points={s.points.flatMap((p) => [p.x, p.y])}
-                  stroke={s.color}
-                  strokeWidth={s.strokeWidth}
+                  points={stroke.points.flatMap((p) => [p.x, p.y])}
+                  stroke={stroke.color}
+                  strokeWidth={stroke.strokeWidth}
                   tension={0.5}
                   lineCap="round"
                   lineJoin="round"
@@ -245,11 +262,25 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
                   tension={0.5}
                   lineCap="round"
                   lineJoin="round"
+                  globalCompositeOperation="source-over"
                 />
               )}
+              {showRecognizedShapes && renderRecognizedShapes()}
             </Layer>
           </Stage>
         )}
+        <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm px-3 py-1.5 rounded-full shadow text-sm flex items-center">
+          <span className="mr-2">
+            {tool === "pen" ? "✏️" : tool === "eraser" ? "🧹" : "📐"}
+          </span>
+          <span>
+            {tool === "pen"
+              ? "Drawing"
+              : tool === "eraser"
+              ? "Erasing"
+              : "Shape"}
+          </span>
+        </div>
       </div>
     );
   }
