@@ -56,7 +56,8 @@ export default function ThreeView({
     renderer.setClearColor(backgroundColor, 1);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    container.appendChild(renderer.domElement);
+    const canvasEl = renderer.domElement;
+    container.appendChild(canvasEl);
 
     // Scene & camera
     const scene = new THREE.Scene();
@@ -81,19 +82,19 @@ export default function ThreeView({
     point.position.set(0, 150, 0);
     scene.add(point);
 
-    // Grid helper
+    // Grid
     if (showGrid) {
       scene.add(new THREE.GridHelper(500, 20, 0x555555, 0x333333));
     }
 
     // Controls
-    const controls = new OrbitControls(camera, renderer.domElement);
+    const controls = new OrbitControls(camera, canvasEl);
     controls.enableDamping = true;
     controls.dampingFactor = 0.1;
     controls.autoRotate = autoRotate;
     controls.autoRotateSpeed = 1.0;
 
-    // **NEW**: build extruded meshes
+    // Build extruded meshes
     const meshes: THREE.Mesh[] = [];
     shapes.forEach((spec) => {
       if (spec.type !== "extrude") return;
@@ -125,14 +126,25 @@ export default function ThreeView({
       const geom = new THREE.ExtrudeGeometry(shape2D, extrudeSettings);
       geom.center();
 
-      // basic material (physical)
-      const material = new THREE.MeshPhysicalMaterial({
-        color: spec.color,
-        metalness: spec.metalness ?? 0.2,
-        roughness: spec.roughness ?? 0.5,
-        transparent: spec.transparent ?? false,
-        opacity: spec.opacity ?? 1.0,
-      });
+      let material: THREE.Material;
+      switch (spec.materialType) {
+        case "physical":
+          material = new THREE.MeshPhysicalMaterial({
+            color: spec.color,
+            metalness: spec.metalness || 0.2,
+            roughness: spec.roughness || 0.5,
+            transparent: spec.transparent || false,
+            opacity: spec.opacity || 1.0,
+          });
+          break;
+        // … other material cases …
+        default:
+          material = new THREE.MeshBasicMaterial({
+            color: spec.color,
+            transparent: spec.transparent || false,
+            opacity: spec.opacity || 1.0,
+          });
+      }
 
       const mesh = new THREE.Mesh(geom, material);
       mesh.castShadow = true;
@@ -141,7 +153,22 @@ export default function ThreeView({
       meshes.push(mesh);
     });
 
-    // Animation loop
+    // Center camera on all meshes
+    if (meshes.length) {
+      const box = new THREE.Box3().setFromObject(scene);
+      const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3());
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const distance = maxDim * 2;
+      camera.position.set(center.x, center.y + maxDim / 2, center.z + distance);
+      camera.lookAt(center);
+      controls.target.copy(center);
+      controls.update();
+    }
+
+    setIsLoading(false);
+
+    // Render loop
     const animate = () => {
       requestAnimationFrame(animate);
       controls.update();
@@ -149,8 +176,8 @@ export default function ThreeView({
     };
     animate();
 
-    // Resize handling
-    const onResize = () => {
+    // Handle window resize
+    const handleResize = () => {
       if (!container) return;
       const w = container.clientWidth;
       const h = container.clientHeight;
@@ -158,16 +185,27 @@ export default function ThreeView({
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
     };
-    window.addEventListener("resize", onResize);
-
-    setIsLoading(false);
+    window.addEventListener("resize", handleResize);
 
     // Cleanup
     return () => {
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener("resize", handleResize);
       controls.dispose();
+
+      // Dispose geometries & materials
+      meshes.forEach((m) => {
+        m.geometry.dispose();
+        if (Array.isArray(m.material)) {
+          m.material.forEach((mat) => mat.dispose());
+        } else {
+          (m.material as THREE.Material).dispose();
+        }
+      });
+
       renderer.dispose();
-      container.removeChild(renderer.domElement);
+      if (canvasEl.parentElement === container) {
+        container.removeChild(canvasEl);
+      }
     };
   }, [shapes, backgroundColor, autoRotate, showGrid]);
 
