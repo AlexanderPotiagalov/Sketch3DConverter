@@ -9,11 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@types/three": "^0.176.0",
+    "@google-cloud/aiplatform": "^4.2.0",
     "imagetracerjs": "^1.2.6",
     "konva": "^9.3.20",
     "lucide-react": "^0.511.0",
     "next": "15.3.2",
+    "openai": "^4.103.0",
+    "potrace": "^2.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-konva": "^19.0.3",
@@ -26,6 +28,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.176.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
     "tailwindcss": "^4",
