@@ -47,6 +47,7 @@ export default function ThreeView({
 
     setIsLoading(true);
 
+    // Renderer setup
     const width = container.clientWidth;
     const height = container.clientHeight;
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -57,7 +58,7 @@ export default function ThreeView({
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
 
-    // Scene and camera
+    // Scene & camera
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(backgroundColor);
 
@@ -65,7 +66,7 @@ export default function ThreeView({
     camera.position.set(0, 100, 500);
     camera.lookAt(0, 0, 0);
 
-    // Ambient and directional lights
+    // Lights
     scene.add(new THREE.AmbientLight(0xffffff, 0.5));
     const dir1 = new THREE.DirectionalLight(0xffffff, 0.8);
     dir1.position.set(50, 50, 100);
@@ -80,18 +81,65 @@ export default function ThreeView({
     point.position.set(0, 150, 0);
     scene.add(point);
 
-    // Grid
+    // Grid helper
     if (showGrid) {
-      const grid = new THREE.GridHelper(500, 20, 0x555555, 0x333333);
-      scene.add(grid);
+      scene.add(new THREE.GridHelper(500, 20, 0x555555, 0x333333));
     }
 
-    // OrbitControls for rotation
+    // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.1;
     controls.autoRotate = autoRotate;
     controls.autoRotateSpeed = 1.0;
+
+    // **NEW**: build extruded meshes
+    const meshes: THREE.Mesh[] = [];
+    shapes.forEach((spec) => {
+      if (spec.type !== "extrude") return;
+
+      // create 2D shape
+      let shape2D: THREE.Shape;
+      if (spec.shape === "circle" && spec.points.length >= 2) {
+        const c = spec.points[0];
+        const rPt = spec.points[1];
+        const r = Math.hypot(rPt.x - c.x, rPt.y - c.y);
+        shape2D = new THREE.Shape();
+        shape2D.absarc(c.x, c.y, r, 0, Math.PI * 2, false);
+      } else {
+        shape2D = new THREE.Shape(
+          spec.points.map((p) => new THREE.Vector2(p.x, p.y))
+        );
+      }
+
+      // extrude settings
+      const extrudeSettings = {
+        depth: spec.height || 20,
+        bevelEnabled: spec.bevelEnabled !== false,
+        bevelThickness: spec.bevelThickness || 2,
+        bevelSize: spec.bevelSize || 1,
+        bevelSegments: spec.bevelSegments || 3,
+      };
+
+      // geometry + center
+      const geom = new THREE.ExtrudeGeometry(shape2D, extrudeSettings);
+      geom.center();
+
+      // basic material (physical)
+      const material = new THREE.MeshPhysicalMaterial({
+        color: spec.color,
+        metalness: spec.metalness ?? 0.2,
+        roughness: spec.roughness ?? 0.5,
+        transparent: spec.transparent ?? false,
+        opacity: spec.opacity ?? 1.0,
+      });
+
+      const mesh = new THREE.Mesh(geom, material);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      scene.add(mesh);
+      meshes.push(mesh);
+    });
 
     // Animation loop
     const animate = () => {
@@ -101,7 +149,7 @@ export default function ThreeView({
     };
     animate();
 
-    // Handle resize
+    // Resize handling
     const onResize = () => {
       if (!container) return;
       const w = container.clientWidth;
@@ -114,6 +162,7 @@ export default function ThreeView({
 
     setIsLoading(false);
 
+    // Cleanup
     return () => {
       window.removeEventListener("resize", onResize);
       controls.dispose();
