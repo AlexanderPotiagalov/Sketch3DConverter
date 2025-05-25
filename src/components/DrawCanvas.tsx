@@ -1,4 +1,3 @@
-// components/DrawCanvas.tsx
 "use client";
 
 import React, {
@@ -151,6 +150,58 @@ const DrawCanvas = forwardRef<DrawCanvasHandle, DrawCanvasProps>(
     const handleTouchMove = (e: any) =>
       handleMouseMove({ evt: e.evt.touches[0] });
     const handleTouchEnd = () => endStroke();
+
+    const renderRecognizedShapes = () =>
+      recognizedShapes.map((shape, i) => {
+        switch (shape.type) {
+          case "circle":
+            if (!shape.properties?.center || !shape.properties?.radius)
+              return null;
+            return (
+              <Circle
+                key={i}
+                x={shape.properties.center.x}
+                y={shape.properties.center.y}
+                radius={shape.properties.radius}
+                stroke={shape.color}
+                strokeWidth={2}
+                dash={[5, 5]}
+                opacity={0.7}
+              />
+            );
+          case "rectangle":
+            if (!shape.boundingBox) return null;
+            return (
+              <Rect
+                key={i}
+                x={shape.boundingBox.x}
+                y={shape.boundingBox.y}
+                width={shape.boundingBox.width}
+                height={shape.boundingBox.height}
+                stroke={shape.color}
+                strokeWidth={2}
+                dash={[5, 5]}
+                opacity={0.7}
+              />
+            );
+          case "triangle":
+          case "polygon":
+          case "line":
+            return (
+              <Line
+                key={i}
+                points={shape.points.flatMap((p) => [p.x, p.y])}
+                stroke={shape.color}
+                strokeWidth={2}
+                closed={shape.type !== "line"}
+                dash={[5, 5]}
+                opacity={0.7}
+              />
+            );
+          default:
+            return null;
+        }
+      });
 
     return (
       <div ref={containerRef} className="w-full h-full relative">
