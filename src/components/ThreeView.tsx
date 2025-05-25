@@ -4,11 +4,39 @@ import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-type ThreeViewProps = {
-  className?: string;
+export type ExtrudeSpec = {
+  type: "extrude";
+  points: { x: number; y: number }[];
+  color: string;
+  height: number;
+  shape?: string;
+  depth?: number;
+  bevelEnabled?: boolean;
+  bevelThickness?: number;
+  bevelSize?: number;
+  bevelSegments?: number;
+  materialType?: "standard" | "physical" | "basic" | "lambert" | "phong";
+  metalness?: number;
+  roughness?: number;
+  transparent?: boolean;
+  opacity?: number;
 };
 
-export default function ThreeView({ className }: ThreeViewProps) {
+type ThreeViewProps = {
+  className?: string;
+  shapes?: ExtrudeSpec[];
+  backgroundColor?: string;
+  autoRotate?: boolean;
+  showGrid?: boolean;
+};
+
+export default function ThreeView({
+  className,
+  shapes = [],
+  backgroundColor = "#f0f0f0",
+  autoRotate = true,
+  showGrid = true,
+}: ThreeViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -20,14 +48,15 @@ export default function ThreeView({ className }: ThreeViewProps) {
 
     const width = container.clientWidth;
     const height = container.clientHeight;
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height);
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setClearColor(0xffffff, 1);
+    renderer.setClearColor(backgroundColor, 1);
     container.appendChild(renderer.domElement);
 
     // Scene and camera
     const scene = new THREE.Scene();
+    scene.background = new THREE.Color(backgroundColor);
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
     camera.position.set(0, 0, 100);
 
@@ -40,13 +69,7 @@ export default function ThreeView({ className }: ThreeViewProps) {
     // OrbitControls for rotation
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-
-    // Example mesh (replace with extruded shapes later)
-    const geometry = new THREE.BoxGeometry(30, 30, 30);
-    const material = new THREE.MeshStandardMaterial({ color: 0x0077ff });
-    const mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
+    controls.autoRotate = autoRotate;
 
     // Animation loop
     const animate = () => {
@@ -75,7 +98,7 @@ export default function ThreeView({ className }: ThreeViewProps) {
       renderer.dispose();
       container.removeChild(renderer.domElement);
     };
-  }, []);
+  }, [shapes, backgroundColor, autoRotate, showGrid]);
 
   return (
     <div ref={containerRef} className={className}>
