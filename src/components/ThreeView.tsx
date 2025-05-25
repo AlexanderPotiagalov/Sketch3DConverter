@@ -1,7 +1,6 @@
-// src/components/ThreeView.tsx
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
@@ -11,18 +10,21 @@ type ThreeViewProps = {
 
 export default function ThreeView({ className }: ThreeViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-    const width = containerRef.current.clientWidth;
-    const height = containerRef.current.clientHeight;
+    const container = containerRef.current;
+    if (!container) return;
 
-    // Renderer with white background
+    setIsLoading(true);
+
+    const width = container.clientWidth;
+    const height = container.clientHeight;
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(width, height);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setClearColor(0xffffff, 1);
-    containerRef.current.appendChild(renderer.domElement);
+    container.appendChild(renderer.domElement);
 
     // Scene and camera
     const scene = new THREE.Scene();
@@ -56,22 +58,32 @@ export default function ThreeView({ className }: ThreeViewProps) {
 
     // Handle resize
     const onResize = () => {
-      if (!containerRef.current) return;
-      const w = containerRef.current.clientWidth;
-      const h = containerRef.current.clientHeight;
+      if (!container) return;
+      const w = container.clientWidth;
+      const h = container.clientHeight;
       renderer.setSize(w, h);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
     };
     window.addEventListener("resize", onResize);
 
+    setIsLoading(false);
+
     return () => {
       window.removeEventListener("resize", onResize);
       controls.dispose();
       renderer.dispose();
-      containerRef.current?.removeChild(renderer.domElement);
+      container.removeChild(renderer.domElement);
     };
   }, []);
 
-  return <div ref={containerRef} className={className} />;
+  return (
+    <div ref={containerRef} className={className}>
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white/80">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500" />
+        </div>
+      )}
+    </div>
+  );
 }
