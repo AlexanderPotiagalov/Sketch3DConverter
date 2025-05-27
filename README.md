@@ -1,7 +1,12 @@
 <div align="left">
-    <img src="https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/ec559a9f6bfd399b82bb44393651661b08aaf7ba/icons/folder-secure.svg" space-top: 40; width="35%" align="left" style="margin-right: 15; margin-top: 100;"/>
     <div style="display: inline-block;">
-        <h1 style="display: inline-block; vertical-align: middle; margin-top: 0;">Sketch To 3D</h1>
+    <h1 style="display: inline-block; vertical-align: middle; margin-top: 0;">Sketch To 3D</h1>
+        <img
+      src="https://raw.githubusercontent.com/AlexanderPotiagalov/DeepScan-AI/main/DeepScanImage.jpeg"
+      width="25%"
+      align="left"
+      style="margin-right: 15; margin-top: 60;"
+    />
         <p><em>Draw in 2D, recognize shapes, and instantly extrude them into interactive 3D — right in your browser.</em></p>
     <img src="https://img.shields.io/github/license/AlexanderPotiagalov/Sketch3DConverter?style=for-the-badge&color=6366f1&labelColor=1e293b" alt="License"/>
     <img src="https://img.shields.io/github/last-commit/AlexanderPotiagalov/Sketch3DConverter?style=for-the-badge&color=10b981&labelColor=1e293b" alt="Last Commit"/>
@@ -59,10 +64,10 @@
 ## 📸 Extension Screenshots
 
 <div align="center">
-  <img src="public/circle.png" width="22.9%" style="border-radius: 12px; margin-right: 10px;"/>
-  <img src="public/circle3d.png" width="23%" style="border-radius: 12px; margin-right: 10px;"/>
-  <img src="public/square.png" width="22.5%" style="border-radius: 12px;"/>
-  <img src="public/square3d.png" width="22.9%" style="border-radius: 12px;"/>
+  <img src="public/circle.png" width="22.9%" style="border-radius: 24px; margin-right: 10px;"/>
+  <img src="public/circle3d.png" width="23%" style="border-radius: 24px; margin-right: 10px;"/>
+  <img src="public/square.png" width="22.5%" style="border-radius: 24px;"/>
+  <img src="public/square3d.png" width="22.9%" style="border-radius: 24px;"/>
 </div>
 
 ---
