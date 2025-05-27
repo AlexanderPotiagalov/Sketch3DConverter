@@ -1,8 +1,8 @@
 <div align="left">
-    <img src="https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/ec559a9f6bfd399b82bb44393651661b08aaf7ba/icons/folder-secure.svg" space-top: 40; width="20%" align="left" style="margin-right: 15; margin-top: 100;"/>
+    <img src="https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/ec559a9f6bfd399b82bb44393651661b08aaf7ba/icons/folder-secure.svg" space-top: 40; width="35%" align="left" style="margin-right: 15; margin-top: 100;"/>
     <div style="display: inline-block;">
         <h1 style="display: inline-block; vertical-align: middle; margin-top: 0;">Sketch To 3D</h1>
-        <p><em>Protecting users from phishing, scams, and shady websites — in real time.</em></p>
+        <p><em>Draw in 2D, recognize shapes, and instantly extrude them into interactive 3D — right in your browser.</em></p>
     <img src="https://img.shields.io/github/license/AlexanderPotiagalov/Sketch3DConverter?style=for-the-badge&color=6366f1&labelColor=1e293b" alt="License"/>
     <img src="https://img.shields.io/github/last-commit/AlexanderPotiagalov/Sketch3DConverter?style=for-the-badge&color=10b981&labelColor=1e293b" alt="Last Commit"/>
     <img src="https://img.shields.io/github/languages/top/AlexanderPotiagalov/Sketch3DConverter?style=for-the-badge&color=f59e0b&labelColor=1e293b" alt="Top Language"/>
@@ -23,6 +23,7 @@
 <br clear="left"/>
 
 ---
+
 <details><summary>📜 Table of Contents</summary>
 
 - [📖 Overview](#-overview)
@@ -58,10 +59,10 @@
 ## 📸 Extension Screenshots
 
 <div align="center">
-  <img src="noissues.png" width="22.9%" style="border-radius: 12px; margin-right: 10px;"/>
-  <img src="suspicious.png" width="23%" style="border-radius: 12px; margin-right: 10px;"/>
-  <img src="nossl.png" width="22.5%" style="border-radius: 12px;"/>
-  <img src="googlesafebrowsing.png" width="22.9%" style="border-radius: 12px;"/>
+  <img src="public/circle.png" width="22.9%" style="border-radius: 12px; margin-right: 10px;"/>
+  <img src="public/circle3d.png" width="23%" style="border-radius: 12px; margin-right: 10px;"/>
+  <img src="public/square.png" width="22.5%" style="border-radius: 12px;"/>
+  <img src="public/square3d.png" width="22.9%" style="border-radius: 12px;"/>
 </div>
 
 ---
@@ -73,6 +74,7 @@
 <td width="50%">
 
 ### 🎨 **Intuitive Drawing Experience**
+
 - **Freehand Drawing** with natural pen tools
 - **Smart Shape Recognition** for circles, rectangles, lines, and polygons
 - **Responsive Canvas** that adapts to any screen size
@@ -83,6 +85,7 @@
 <td width="50%">
 
 ### 🔮 **Real-Time 3D Magic**
+
 - **Instant Extrusion** from 2D shapes to 3D objects
 - **Interactive 3D Scene** with orbit controls and lighting
 - **Live Preview** as you draw
@@ -95,6 +98,7 @@
 <td width="50%">
 
 ### 🛠️ **Professional Tools**
+
 - **Clean API** with `getStrokes()`, `clearCanvas()`, `exportImage()`
 - **Grid System** with snap-to-grid functionality
 - **Pan & Zoom** independent of shape data
@@ -105,6 +109,7 @@
 <td width="50%">
 
 ### 🎯 **Performance Optimized**
+
 - **WebGL Acceleration** for smooth 3D rendering
 - **Efficient Algorithms** for shape recognition
 - **Responsive Design** across all devices
@@ -121,14 +126,14 @@
 
 <div align="center">
 
-| Technology | Purpose | Why We Chose It |
-|:----------:|:-------:|:---------------:|
-| ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white) | **Framework** | Server-side rendering & optimal performance |
-| ![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black) | **UI Library** | Component-based architecture & state management |
-| ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white) | **Language** | Type safety & better developer experience |
-| ![Three.js](https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=three.js&logoColor=white) | **3D Engine** | Powerful WebGL abstraction & 3D capabilities |
-| ![Konva](https://img.shields.io/badge/Konva-2D_Canvas-blue?style=for-the-badge) | **2D Canvas** | High-performance 2D graphics & interactions |
-| ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white) | **Styling** | Utility-first CSS & rapid prototyping |
+|                                                     Technology                                                      |    Purpose     |                 Why We Chose It                 |
+| :-----------------------------------------------------------------------------------------------------------------: | :------------: | :---------------------------------------------: |
+|      ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)       | **Framework**  |   Server-side rendering & optimal performance   |
+|         ![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)          | **UI Library** | Component-based architecture & state management |
+|  ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)  |  **Language**  |    Type safety & better developer experience    |
+|     ![Three.js](https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=three.js&logoColor=white)     | **3D Engine**  |  Powerful WebGL abstraction & 3D capabilities   |
+|                   ![Konva](https://img.shields.io/badge/Konva-2D_Canvas-blue?style=for-the-badge)                   | **2D Canvas**  |   High-performance 2D graphics & interactions   |
+| ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white) |  **Styling**   |      Utility-first CSS & rapid prototyping      |
 
 </div>
 
@@ -139,6 +144,7 @@
 Get up and running in less than 3 minutes:
 
 ### Prerequisites
+
 - **Node.js 18+** (Latest LTS recommended)
 - **npm** or **yarn** package manager
 - **Modern browser** with WebGL 2.0 support
@@ -220,24 +226,24 @@ const canvasRef = useRef<DrawCanvasRef>(null);
 canvasRef.current?.clearCanvas();
 
 // Export current drawing as image
-const imageData = canvasRef.current?.exportImage('png', 0.9);
+const imageData = canvasRef.current?.exportImage("png", 0.9);
 
 // Get all strokes for processing
 const strokes = canvasRef.current?.getStrokes();
 
 // Set drawing mode
-canvasRef.current?.setTool('pen' | 'eraser' | 'select');
+canvasRef.current?.setTool("pen" | "eraser" | "select");
 ```
 
 ### Advanced Shape Recognition
 
 ```typescript
-import { ShapeRecognizer } from './utils/ShapeRecognizer';
+import { ShapeRecognizer } from "./utils/ShapeRecognizer";
 
 const recognizer = new ShapeRecognizer({
   tolerance: 0.1,
   minPoints: 5,
-  enableSmoothing: true
+  enableSmoothing: true,
 });
 
 const shapes = recognizer.analyzeStrokes(strokeData);
@@ -251,21 +257,21 @@ const detailedResults = recognizer.analyzeWithConfidence(strokeData);
 ### 3D Scene Integration
 
 ```typescript
-import { ThreeScene } from './components/ThreeView';
+import { ThreeScene } from "./components/ThreeView";
 
 // Create 3D scene with custom settings
 const scene = new ThreeScene({
   antialias: true,
   shadows: true,
-  postProcessing: true
+  postProcessing: true,
 });
 
 // Add shapes to 3D scene
-shapes.forEach(shape => {
+shapes.forEach((shape) => {
   const mesh = scene.addExtrudedShape(shape, {
     depth: 10,
     bevelEnabled: true,
-    material: 'phong'
+    material: "phong",
   });
 });
 
@@ -282,11 +288,11 @@ scene.animate(() => {
 
 We're always improving and exploring new possibilities:
 
-- **🤖 Smarter AI** — Enhanced shape recognition and intelligent suggestions  
-- **🎨 Better Visuals** — Support for textures, lighting, and materials  
-- **📱 Mobile Friendly** — Seamless experience on phones and tablets  
-- **👥 Collaboration** — Real-time drawing with friends or teammates  
-- **🥽 Immersive Tech** — AR/VR support and 3D printing export options  
+- **🤖 Smarter AI** — Enhanced shape recognition and intelligent suggestions
+- **🎨 Better Visuals** — Support for textures, lighting, and materials
+- **📱 Mobile Friendly** — Seamless experience on phones and tablets
+- **👥 Collaboration** — Real-time drawing with friends or teammates
+- **🥽 Immersive Tech** — AR/VR support and 3D printing export options
 
 ---
 
@@ -308,7 +314,7 @@ We believe great software is built by great communities:
 ### Ways to Contribute
 
 - 🐛 **Bug Reports** — Help us squash those pesky bugs
-- 💡 **Feature Requests** — Share your brilliant ideas  
+- 💡 **Feature Requests** — Share your brilliant ideas
 - 🔧 **Code Contributions** — Submit pull requests
 - 📚 **Documentation** — Improve our guides and tutorials
 - 🎨 **Design & UX** — Enhance UI/UX and create assets
@@ -327,7 +333,7 @@ Built with modern web technologies and a passion for creativity.
 
 ### 👨‍💻 **Created with ❤️ by [Alexander Potiagalov](https://github.com/AlexanderPotiagalov)**
 
-*Turning sketches into reality, one line at a time.*
+_Turning sketches into reality, one line at a time._
 
 ---
 
@@ -340,6 +346,6 @@ Built with modern web technologies and a passion for creativity.
 
 **⭐ Star this repo if you found it helpful!**
 
-*Made with ✨ for creators, by creators*
+_Made with ✨ for creators, by creators_
 
 </div>
