@@ -5,7 +5,7 @@
     </h1>
     <img
       src="https://raw.githubusercontent.com/AlexanderPotiagalov/Sketch3DConverter/main/public/2d-3d.png"
-      width="45%"
+      width="40%"
       align="left"
       style="margin-right:15px; margin-top:60px;"
       alt="2D to 3D Demo"
