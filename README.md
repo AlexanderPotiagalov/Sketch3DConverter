@@ -3,7 +3,7 @@
     <h1 style="display: inline-block; vertical-align: middle; margin-top: 0;">Sketch To 3D</h1>
         <img
       src="https://raw.githubusercontent.com/AlexanderPotiagalov/Sketch3DConverter/main/public/2d-3d.png"
-      width="40%"
+      width="50%"
       align="left"
       style="margin-right: 15; margin-top: 60;"
     />
@@ -32,7 +32,7 @@
 <details><summary>📜 Table of Contents</summary>
 
 - [📖 Overview](#-overview)
-- [📸 Extension Screenshots](#-extension-screenshots)
+- [📸 UI Screenshots](#-ui-screenshots)
 - [✨ Features](#-features)
 - [🛠️ Tech Stack](#%EF%B8%8F-tech-stack)
 - [🚀 Quick Start](#-quick-start)
@@ -61,13 +61,13 @@
 
 ---
 
-## 📸 Extension Screenshots
+## 📸 UI Screenshots
 
 <div align="center">
-  <img src="public/circle.png" width="22.9%" style="border-radius: 30px; margin-right: 10px;"/>
-  <img src="public/circle3d.png" width="23%" style="border-radius: 30px; margin-right: 10px;"/>
-  <img src="public/square.png" width="22.5%" style="border-radius: 30px;"/>
-  <img src="public/square3d.png" width="22.9%" style="border-radius: 30px;"/>
+  <img src="public/circle.png" width="40%" style="border-radius: 30px; margin-right: 10px;"/>
+  <img src="public/circle3d.png" width="40%" style="border-radius: 30px; margin-right: 10px;"/>
+  <img src="public/square.png" width="40%" style="border-radius: 30px;"/>
+  <img src="public/square3d.png" width="40%" style="border-radius: 30px;"/>
 </div>
 
 ---
