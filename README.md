@@ -2,8 +2,8 @@
     <div style="display: inline-block;">
     <h1 style="display: inline-block; vertical-align: middle; margin-top: 0;">Sketch To 3D</h1>
         <img
-      src="https://raw.githubusercontent.com/AlexanderPotiagalov/DeepScan-AI/main/DeepScanImage.jpeg"
-      width="25%"
+      src="https://raw.githubusercontent.com/AlexanderPotiagalov/Sketch3DConverter/main/public/2d-3d.png"
+      width="40%"
       align="left"
       style="margin-right: 15; margin-top: 60;"
     />
@@ -64,10 +64,10 @@
 ## 📸 Extension Screenshots
 
 <div align="center">
-  <img src="public/circle.png" width="22.9%" style="border-radius: 24px; margin-right: 10px;"/>
-  <img src="public/circle3d.png" width="23%" style="border-radius: 24px; margin-right: 10px;"/>
-  <img src="public/square.png" width="22.5%" style="border-radius: 24px;"/>
-  <img src="public/square3d.png" width="22.9%" style="border-radius: 24px;"/>
+  <img src="public/circle.png" width="22.9%" style="border-radius: 30px; margin-right: 10px;"/>
+  <img src="public/circle3d.png" width="23%" style="border-radius: 30px; margin-right: 10px;"/>
+  <img src="public/square.png" width="22.5%" style="border-radius: 30px;"/>
+  <img src="public/square3d.png" width="22.9%" style="border-radius: 30px;"/>
 </div>
 
 ---
