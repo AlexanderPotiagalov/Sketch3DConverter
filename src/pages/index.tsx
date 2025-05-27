@@ -1,28 +1,40 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import dynamic from "next/dynamic";
+import type { Stroke } from "@/components/DrawCanvas";
 import type { DrawCanvasHandle } from "@/components/DrawCanvas";
+import type { RecognizedShape } from "@/utils/ShapeRecognizer";
 
 const DrawCanvas = dynamic(() => import("@/components/DrawCanvas"), {
   ssr: false,
 });
 const ThreeView = dynamic(() => import("@/components/ThreeView"), {
-  ssr: true,
+  ssr: false,
 });
 
 export default function Home() {
   const drawRef = useRef<DrawCanvasHandle>(null);
   const [color, setColor] = useState("#0077ff");
   const [strokeWidth, setStrokeWidth] = useState(5);
+  const [strokes, setStrokes] = useState<Stroke[]>([]);
+  const [recognizedShapes, setRecognizedShapes] = useState<RecognizedShape[]>(
+    []
+  );
   const [show3D, setShow3D] = useState(false);
+
+  // callbacks to receive data from DrawCanvas
+  const handleStrokesChange = useCallback((newStrokes: Stroke[]) => {
+    setStrokes(newStrokes);
+  }, []);
+  const handleShapesRecognized = useCallback((shapes: RecognizedShape[]) => {
+    setRecognizedShapes(shapes);
+  }, []);
 
   const handleConvert = () => {
     setShow3D(true);
-    // TODO: vectorize strokes -> shapes, pass to ThreeView
   };
 
   return (
     <div className="relative w-full h-screen bg-white">
-      {/* Toolbar */}
       {!show3D && (
         <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 flex items-center space-x-4 bg-white p-2 rounded shadow">
           <label>Color:</label>
@@ -48,18 +60,20 @@ export default function Home() {
         </div>
       )}
 
-      {/* Canvas & 3D overlay */}
       <div className="absolute inset-0">
-        {/* 2D Canvas Layer */}
         <div
           className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
             show3D ? "opacity-0 pointer-events-none" : "opacity-100"
           }`}
         >
-          <DrawCanvas ref={drawRef} color={color} strokeWidth={strokeWidth} />
+          <DrawCanvas
+            ref={drawRef}
+            color={color}
+            strokeWidth={strokeWidth}
+            onStrokesChange={handleStrokesChange}
+            onShapesRecognized={handleShapesRecognized}
+          />
         </div>
-
-        {/* 3D Layer */}
         <div
           className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
             show3D ? "opacity-100" : "opacity-0 pointer-events-none"
