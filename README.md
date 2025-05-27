@@ -3,11 +3,11 @@
     <h1 style="display: inline-block; vertical-align: middle; margin-top: 0;">Sketch To 3D</h1>
         <img
       src="https://raw.githubusercontent.com/AlexanderPotiagalov/Sketch3DConverter/main/public/2d-3d.png"
-      width="50%"
+      width="45%"
       align="left"
       style="margin-right: 15; margin-top: 60;"
     />
-        <p><em>Draw in 2D, recognize shapes, and instantly extrude them into interactive 3D — right in your browser.</em></p>
+        <p><em>Draw in 2D, recognize shapes, and instantly extrude them into interactive 3D.</em></p>
     <img src="https://img.shields.io/github/license/AlexanderPotiagalov/Sketch3DConverter?style=for-the-badge&color=6366f1&labelColor=1e293b" alt="License"/>
     <img src="https://img.shields.io/github/last-commit/AlexanderPotiagalov/Sketch3DConverter?style=for-the-badge&color=10b981&labelColor=1e293b" alt="Last Commit"/>
     <img src="https://img.shields.io/github/languages/top/AlexanderPotiagalov/Sketch3DConverter?style=for-the-badge&color=f59e0b&labelColor=1e293b" alt="Top Language"/>
