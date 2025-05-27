@@ -19,19 +19,52 @@ export default function Home() {
   const [recognizedShapes, setRecognizedShapes] = useState<RecognizedShape[]>(
     []
   );
+  const [shapes3D, setShapes3D] = useState<any[]>([]);
   const [show3D, setShow3D] = useState(false);
+  const [isConverting, setIsConverting] = useState(false);
 
-  // callbacks to receive data from DrawCanvas
-  const handleStrokesChange = useCallback((newStrokes: Stroke[]) => {
-    setStrokes(newStrokes);
-  }, []);
-  const handleShapesRecognized = useCallback((shapes: RecognizedShape[]) => {
-    setRecognizedShapes(shapes);
-  }, []);
+  const handleStrokesChange = useCallback((s: Stroke[]) => setStrokes(s), []);
+  const handleShapesRecognized = useCallback(
+    (s: RecognizedShape[]) => setRecognizedShapes(s),
+    []
+  );
 
-  const handleConvert = () => {
-    setShow3D(true);
-  };
+  async function handleConvert() {
+    if (!strokes.length && !recognizedShapes.length) {
+      alert("Draw something first!");
+      return;
+    }
+    setIsConverting(true);
+    try {
+      const payload = recognizedShapes.length
+        ? { recognizedShapes }
+        : { strokes };
+      const res = await fetch("/api/vectorize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(`Error ${res.status}`);
+      const { shapes } = await res.json();
+      setShapes3D(shapes);
+      setShow3D(true);
+    } catch {
+      alert("Conversion failed. Please try again.");
+    } finally {
+      setIsConverting(false);
+    }
+  }
+
+  function handleBackToDrawing() {
+    setShow3D(false);
+  }
+
+  function handleClear() {
+    drawRef.current?.clearCanvas();
+    setStrokes([]);
+    setRecognizedShapes([]);
+    setShapes3D([]);
+  }
 
   return (
     <div className="relative w-full h-screen bg-white">
@@ -52,10 +85,19 @@ export default function Home() {
             onChange={(e) => setStrokeWidth(+e.target.value)}
           />
           <button
-            className="px-3 py-1 bg-blue-600 text-white rounded"
+            className={`px-3 py-1 rounded ${
+              isConverting ? "bg-gray-400" : "bg-blue-600"
+            } text-white`}
             onClick={handleConvert}
+            disabled={isConverting}
           >
-            Convert to 3D
+            {isConverting ? "Converting..." : "Convert to 3D"}
+          </button>
+          <button
+            className="px-3 py-1 bg-red-100 text-red-600 rounded"
+            onClick={handleClear}
+          >
+            Clear
           </button>
         </div>
       )}
@@ -79,7 +121,20 @@ export default function Home() {
             show3D ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
         >
-          <ThreeView className="w-full h-full" />
+          <ThreeView
+            className="w-full h-full"
+            shapes={shapes3D}
+            autoRotate
+            showGrid
+          />
+          {show3D && (
+            <button
+              className="absolute top-4 left-4 px-3 py-1 bg-slate-100 rounded"
+              onClick={handleBackToDrawing}
+            >
+              ← Back
+            </button>
+          )}
         </div>
       </div>
     </div>
