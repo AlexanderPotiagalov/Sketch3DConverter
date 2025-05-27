@@ -18,7 +18,9 @@
       <img src="https://img.shields.io/github/stars/AlexanderPotiagalov/Sketch3DConverter?style=for-the-badge&color=ff6b6b&labelColor=1e293b" alt="GitHub Stars"/>
     </p>
     <p style="margin:4px 0; white-space: nowrap;">
-      <p>Built with:</p>
+      Built with:&nbsp;
+      <br>
+      <br>
       <img src="https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js&logoColor=white" alt="Next.js"/>
       <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React"/>
       <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript"/>
