@@ -5,7 +5,7 @@
     </h1>
     <img
       src="https://raw.githubusercontent.com/AlexanderPotiagalov/Sketch3DConverter/main/public/2d-3d.png"
-      width="40%"
+      width="50%"
       align="left"
       style="margin-right:15px; margin-top:60px;"
       alt="2D to 3D Demo"
@@ -19,7 +19,6 @@
     </p>
     <p style="margin:4px 0; white-space: nowrap;">
       Built with:&nbsp;
-      <br>
       <img src="https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js&logoColor=white" alt="Next.js"/>
       <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React"/>
       <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript"/>
